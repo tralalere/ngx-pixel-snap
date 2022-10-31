@@ -44,7 +44,7 @@ export class PixelModule {
    * - Checks if Pixel was initialized
    * @param pixelId Pixel ID to verify
    */
-  private static verifyPixelId(fBpixelId: string, snapPixelId: string): void {
+  private static verifyPixelId(fBpixelId: string|undefined, snapPixelId: string|undefined): void {
     // Have to verify first that all Pixel IDs follow the same 15 digit format
     if ((fBpixelId === null || fBpixelId === undefined || fBpixelId.length === 0)
       && (snapPixelId === null || snapPixelId === undefined || snapPixelId.length === 0)) {

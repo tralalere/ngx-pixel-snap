@@ -2,9 +2,9 @@ export interface PixelConfiguration {
   /** Whether to start tracking immediately. Default is `false` */
   enabled?: boolean;
   /** Your Facebook Pixel ID */
-  fbPixelId: string;
+  fbPixelId?: string | undefined;
   /** Your Snap Pixel ID */
-  snapPixelId: string;
+  snapPixelId?: string | undefined;
 }
 
 export interface PixelEventProperties {

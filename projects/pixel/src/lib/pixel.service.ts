@@ -56,7 +56,7 @@ export class PixelService {
       this.addFbPixelScript(fbPixelId);
     }
     if (snapPixelId) {
-      this.snapPixelId(snapPixelId);
+      this.addSnapPixelId(snapPixelId);
     }
   }
 
@@ -165,7 +165,7 @@ export class PixelService {
     this.renderer.appendChild(this.doc.head, scriptElement);
   }
 
- private snapPixelId(pixelId: string): void {
+ private addSnapPixelId(pixelId: string): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
@@ -177,7 +177,7 @@ export class PixelService {
     r.src=n;var u=t.getElementsByTagName(s)[0];
     u.parentNode.insertBefore(r,u);})(window,document,
     'https://sc-static.net/scevent.min.js');
-    snaptr('init', ${pixelId});
+    snaptr('init', '${pixelId}');
     snaptr('track', 'PAGE_VIEW');`;
 
 
