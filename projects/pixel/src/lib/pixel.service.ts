@@ -4,6 +4,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { filter } from 'rxjs/operators';
 
+declare const snaptr: any;
 declare const fbq: any;
 
 @Injectable({
@@ -12,7 +13,7 @@ declare const fbq: any;
 export class PixelService {
 
   private doc: Document;
-  private renderer: Renderer2
+  private renderer: Renderer2;
 
   constructor(
     @Inject('config') private config: PixelConfiguration,
@@ -45,13 +46,18 @@ export class PixelService {
    * - Adds the script to page's head
    * - Tracks first page view
    */
-  initialize(pixelId = this.config.pixelId): void {
+  initialize(fbPixelId = this.config.fbPixelId, snapPixelId = this.config.snapPixelId): void {
     if (this.isLoaded()) {
       console.warn('Tried to initialize a Pixel instance while another is already active. Please call `remove()` before initializing a new instance.');
       return;
     }
     this.config.enabled = true;
-    this.addPixelScript(pixelId);
+    if (fbPixelId) {
+      this.addFbPixelScript(fbPixelId);
+    }
+    if (snapPixelId) {
+      this.snapPixelId(snapPixelId);
+    }
   }
 
   /** Remove the Pixel tracking script */
@@ -80,12 +86,20 @@ export class PixelService {
       return;
     }
 
-    if (properties) {
-      fbq('track', eventName, properties);
-    } else {
-      fbq('track', eventName);
+    if (this.config.fbPixelId) {
+      if (properties) {
+        fbq('track', eventName, properties);
+      } else {
+        fbq('track', eventName);
+      }
     }
-
+    if (this.config.snapPixelId) {
+      if (properties) {
+        snaptr('track', eventName, properties);
+      } else {
+        snaptr('track', eventName);
+      }
+    }
   }
 
   /**
@@ -105,10 +119,20 @@ export class PixelService {
       return;
     }
 
-    if (properties) {
-      fbq('trackCustom', eventName, properties);
-    } else {
-      fbq('trackCustom', eventName);
+    if (this.config.fbPixelId) {
+      if (properties) {
+        fbq('trackCustom', eventName, properties);
+      } else {
+        fbq('trackCustom', eventName);
+      }
+    }
+
+    if (this.config.snapPixelId) {
+      if (properties) {
+        snaptr('trackCustom', eventName, properties);
+      } else {
+        snaptr('trackCustom', eventName);
+      }
     }
   }
 
@@ -116,7 +140,7 @@ export class PixelService {
    * Adds the Facebook Pixel tracking script to the application
    * @param pixelId The Facebook Pixel ID to use
    */
-  private addPixelScript(pixelId: string): void {
+  private addFbPixelScript(pixelId: string): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
@@ -135,7 +159,30 @@ export class PixelService {
 
 
     const scriptElement = this.renderer.createElement('script');
-    this.renderer.setAttribute(scriptElement, 'id', 'pixel-script');
+    this.renderer.setAttribute(scriptElement, 'id', 'fb-pixel-script');
+    this.renderer.setAttribute(scriptElement, 'type', 'text/javascript');
+    this.renderer.setProperty(scriptElement, 'innerHTML', pixelCode);
+    this.renderer.appendChild(this.doc.head, scriptElement);
+  }
+
+ private snapPixelId(pixelId: string): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    const pixelCode = `
+    var pixelCode = (function(e,t,n){if(e.snaptr)return;var a=e.snaptr=function()
+    {a.handleRequest?a.handleRequest.apply(a,arguments):a.queue.push(arguments)};
+    a.queue=[];var s='script';r=t.createElement(s);r.async=!0;
+    r.src=n;var u=t.getElementsByTagName(s)[0];
+    u.parentNode.insertBefore(r,u);})(window,document,
+    'https://sc-static.net/scevent.min.js');
+    snaptr('init', ${pixelId});
+    snaptr('track', 'PAGE_VIEW');`;
+
+
+    const scriptElement = this.renderer.createElement('script');
+    this.renderer.setAttribute(scriptElement, 'id', 'snap-pixel-script');
     this.renderer.setAttribute(scriptElement, 'type', 'text/javascript');
     this.renderer.setProperty(scriptElement, 'innerHTML', pixelCode);
     this.renderer.appendChild(this.doc.head, scriptElement);
@@ -146,16 +193,21 @@ export class PixelService {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-    const pixelElement = this.doc.getElementById('pixel-script');
+    const pixelElement = this.doc.getElementById('fb-pixel-script');
     if (pixelElement) {
       pixelElement.remove();
+    }
+
+    const snapPixelElement = this.doc.getElementById('snap-pixel-script');
+    if (snapPixelElement) {
+      snapPixelElement.remove();
     }
   }
 
   /** Checks if the script element is present */
   private isLoaded(): boolean {
     if (isPlatformBrowser(this.platformId)) {
-      const pixelElement = this.doc.getElementById('pixel-script');
+      const pixelElement = this.doc.getElementById('snap-pixel-script') || this.doc.getElementById('fb-pixel-script');
       return !!pixelElement;
     }
     return false;
