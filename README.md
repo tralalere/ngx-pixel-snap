@@ -35,7 +35,7 @@ import { PixelModule } from 'ngx-pixel';
   ],
   imports: [
     BrowserModule,
-    PixelModule.forRoot({ enabled: true, pixelId: 'YOUR_PIXEL_ID' })
+    PixelModule.forRoot({ enabled: true, fbPixelId: 'YOUR_PIXEL_ID', snapPixelId: 'YOUR_PIXEL_ID' })
   ],
   providers: [],
   bootstrap: [AppComponent]
@@ -97,7 +97,7 @@ When adding ***ngx-pixel*** to `app.module.ts`, add the parameter `enabled: true
 ```TypeScript
 imports: [
   BrowserModule,
-  PixelModule.forRoot({ enabled: true, pixelId: 'YOUR_PIXEL_ID'})
+  PixelModule.forRoot({ enabled: true, fbPixelId: 'YOUR_PIXEL_ID', snapPixelId: 'YOUR_PIXEL_ID'})
 ],
 ```
 
