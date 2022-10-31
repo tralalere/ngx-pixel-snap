@@ -1,5 +1,5 @@
 {
-  "name": "ngx-pixel-fbsnap",
+  "name": "ngx-pixels",
   "description": "An Angular library to simplify the use of a Facebook Pixel.",
   "author": {
     "name": "Niels Kersic",
@@ -7,7 +7,7 @@
     "url": "https://niels.codes"
   },
   "license": "MIT",
-  "version": "1.1.1",
+  "version": "2.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/NielsKersic/ngx-pixel"

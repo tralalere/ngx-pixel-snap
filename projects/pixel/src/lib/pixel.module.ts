@@ -6,7 +6,7 @@ import { PixelService } from './pixel.service';
 @NgModule({
   imports: [],
 })
-export class PixelSnapModule {
+export class PixelModule {
 
   private static config: PixelConfiguration | null = null;
 
@@ -14,10 +14,10 @@ export class PixelSnapModule {
     private pixel: PixelService,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
-    if (!PixelSnapModule.config) {
+    if (!PixelModule.config) {
       throw Error('ngx-pixel not configured correctly. Pass the `pixelId` property to the `forRoot()` function');
     }
-    if (PixelSnapModule.config.enabled && isPlatformBrowser(platformId)) {
+    if (PixelModule.config.enabled && isPlatformBrowser(platformId)) {
       this.pixel.initialize();
     }
   }
@@ -27,14 +27,14 @@ export class PixelSnapModule {
    *
    * Add your Pixel ID as parameter
    */
-  static forRoot(config: PixelConfiguration): ModuleWithProviders<PixelSnapModule> {
+  static forRoot(config: PixelConfiguration): ModuleWithProviders<PixelModule> {
     this.config = config;
     const fbPixelId = config.fbPixelId;
     const snapPixelId = config.snapPixelId;
     this.verifyPixelId(fbPixelId, snapPixelId);
 
     return {
-      ngModule: PixelSnapModule,
+      ngModule: PixelModule,
       providers: [PixelService, { provide: 'config', useValue: config }]
     };
   }
