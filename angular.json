@@ -28,18 +28,6 @@
             "tsConfig": "projects/pixel/tsconfig.spec.json",
             "karmaConfig": "projects/pixel/karma.conf.js"
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/pixel/tsconfig.lib.json",
-              "projects/pixel/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     }},
